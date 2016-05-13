@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/updateMap"
+        android:icon="@drawable/ic_add_black_48dp_00"
+        android:title="Aggiorna Mappa" />
+    <item
+        android:id="@+id/Station"
+        android:icon="@drawable/ic_add_black_48dp_00"
+        android:title="Trova Stazione Vicina"/>
+    <item
+        android:id="@+id/peopleFinder"
+        android:icon="@drawable/ic_add_black_48dp_00"
+        android:title="Cerca Utenti" />
+</menu>
