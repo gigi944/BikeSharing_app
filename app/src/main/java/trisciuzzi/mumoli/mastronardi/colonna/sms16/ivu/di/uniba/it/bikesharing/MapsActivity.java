@@ -23,13 +23,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private final static long FASTEST_INTERVAL = 1000L;
     private final static int MIN_DISPLACEMENT = 0;
@@ -137,37 +138,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location myLocation = mMap.getMyLocation();
         mMap.setMyLocationEnabled(true);
         retrievePosition();
-        showLocationInMap(myLocation);
-    }
-
-    private void updateLocation() {
-
-        LocationRequest locationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setFastestInterval(FASTEST_INTERVAL)
-                .setSmallestDisplacement(MIN_DISPLACEMENT)
-                .setInterval(UPDATE_INTERVAL);
-
-        PendingIntent callbackIntent = PendingIntent
-                .getBroadcast(this, UPDATE_LOCATION_REQUEST_CODE,
-                        LocationUtil.UPDATE_LOCATION_INTENT, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi
-                .requestLocationUpdates(mGoogleApiClient,
-                        locationRequest, callbackIntent);
     }
 
     private void retrievePosition() {
@@ -182,7 +154,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        //startLocationListener();
+        showLocationInMap(mCurrentLocation);
     }
 
     @Override
@@ -201,8 +173,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(myLocation==null || mMap==null)
             return;
         LatLng currentLatLng=new LatLng(myLocation.getLatitude(),myLocation.getLongitude());
-        CameraUpdate cameraUpdate=CameraUpdateFactory.newLatLng(currentLatLng);
-        mMap.animateCamera(cameraUpdate,400,new GoogleMap.CancelableCallback(){
+        CameraPosition cameraPosition=CameraPosition.builder()
+                .target(currentLatLng)
+                .zoom(15.0F)
+                .build();
+        CameraUpdate cameraUpdate=CameraUpdateFactory.newCameraPosition(cameraPosition);
+        mMap.animateCamera(cameraUpdate,800,new GoogleMap.CancelableCallback(){
 
             @Override
             public void onFinish() {
@@ -215,4 +191,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
 }
